@@ -1,9 +1,201 @@
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
+body{
+    background-image: url(..//img/bg-body.jpg)
 }
 
-#greeting-container {
-  margin-top: 20px;
+#container{
+    margin: 0 auto;
+    width: 1050px;
+    margin-bottom: 20px;
+    margin-top: 30px;
+}
+
+#profile{
+    background: #cf455c;
+    background-image: url(..//img/header-shadow.png);
+    background-position: center bottom;
+    background-repeat: repeat-x;
+    overflow: hidden;
+}
+
+.about{
+    float: left;
+    margin-top: 30px;
+    width: 490px;
+    margin-left: 10px;
+}
+
+.about .photo-inner{
+    float: left;
+    background: url(..//img/photo-inner.png) no-repeat;
+    width: 220px;
+    height: 220px;
+    padding: 8px 0 0 19px;
+}
+
+.about h1{
+    font-weight: 900;
+    color: white;
+    line-height: 34px;
+    margin-top: 8px;
+    margin-left: -20px;
+}
+
+.about h3{
+    float: inherit;
+    margin-top: 5px;
+    font-size: 18px;
+    color: white;
+    line-height: 18px;
+    font-family: 'Oswald', sans-serif;
+}
+
+.about p{
+    float: inherit;
+    font-size: 14px;
+    margin-top: 15px;
+    color: white;
+    font-weight: 400;
+    line-height: 24px;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.personal-info{
+    float: left;
+    margin-top: 30px;
+    width: 310px;
+    min-height: 230px;
+    margin-left: 10px;
+    background: url(..//img/personal-info-sep.png) no-repeat;
+    left top;
+    padding: 20px 0 19px 20px;
+}
+
+.personal-info li{
+    line-height: 12px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    float: left;
+    width: 293px;
+}
+
+.personal-info li label{
+    color: white;
+    float: left;
+    padding: 4px 7px;
+    font-weight: 550;
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+.personal-info li span{
+    float: right;
+    width: 220px;
+    padding-top: 4px;
+    font-weight: 400;
+    color: white;
+    text-transform: uppercase;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+header{
+    position: relative;
+    overflow: visible;
+}
+
+span.socials-text{
+    position: absolute;
+    right: 0px;
+    color: white;
+    padding: 2px 9px;
+    font-size: 22px;
+    cursor: pointer;
+    top: 10px;
+    border-radius: 70px;
+}
+
+ul.socialicons{
+    opacity: 0;
+    top: -1px;
+    position: relative;
+    transition: all ease 1s;
+    z-index: -1;
+    left: -7px;
+}
+
+.pulse-button{
+    position: relative;
+    width: 35px;
+    height: 35px;
+    line-height: 15px;
+    border: none;
+    box-shadow: 0 0 0 0 rgb(101, 100, 100);
+    background-color: #cf455c;
+    cursor: pointer;
+    color: white;
+    font-size: 20px; 
+}
+
+.menu{
+    height: 100px;
+    background-color: #ededed;
+    position: relative;
+    padding-left: 130px;
+    padding-right: 30px;
+}
+
+.tabs{
+    height: 117px;
+    position: absolute;
+    margin-top: -14px;
+    z-index: 100;
+}
+
+.tabs li > a{
+    padding-top: 28px;
+    width: 115px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    font-size: 15px;
+    color: #b9b9b9;
+    text-align: center;
+    font-weight: 580;
+    text-transform: uppercase;
+    font-family: 'Roboto Condensed', sans-serif;
+    line-height: 35px;
+    text-decoration: none;
+}
+
+.tabs li.active{
+    background: url(..//img/tab-hover.png) no-repeat;
+}
+
+.tabs li.active a{
+    color: #cf455c;
+}
+
+.tabs li > a > i{
+    font-size: 45px;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#logo{
+    float: left;
+    overflow: hidden;
+    margin-left: 10px;
+    display: none;
+}
+
+#logo h4{
+    color: #555;
+    line-height: 20px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 20px;
+    margin-left: 7px;
+}
+
+i.fa.fa-share{
+    
 }

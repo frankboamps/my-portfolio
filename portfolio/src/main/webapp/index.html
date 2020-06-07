@@ -1,18 +1,113 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title>My Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-  </head>
-  <body>
-    <div id="content">
-      <h1>My Portfolio</h1>
-      <p>This is my portfolio.</p>
-      <p>Click here to get a random message:</p>
-      <button onclick="addRandomGreeting()">Hello</button>
-      <div id="greeting-container"></div>
-    </div>
-  </body>
+    <title>Document</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    
+    <link  rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <section id="container">
+      <header>
+          <div id="logo">
+              <h2>FRANKLIN BOAMPONG</h2>
+              <h4>COMPUTER ENGINEER & TECHNOLOGIST</h4>
+          </div>
+          
+          <div class="social-icons-container">
+              <span class="socials-text">
+                  <button class="pulse-button">
+                      <i class="fa fa-share"></i>
+                  </button>
+              </span>
+              
+              <ul class="socialicons">
+                  <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                  <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                  <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+              </ul>
+              
+          </div>
+          
+      </header>
+      <section id="content">
+          <div id="profile">
+              <div class="about">
+                  <div class="photo-inner">
+                      <ul>
+                          <li><img src="..//img/photo.jpg" alt=""> </li>
+                      </ul>
+                  </div>
+                  <h1>FRANKLIN BOAMPONG</h1>
+                  <h3>COMPUTER ENGINEER & TECHNOLOGIST</h3>
+                  <br>
+                  <p>
+                      I am a very passionate young individual exploring technologies and actively working on projects. You can contact me on any of my social
+                      media platforms and feel free to know more about me here!  
+                  </p>
+              </div>
+              
+              <ul class="personal-info">
+                  <li><label>Name</label><span>Franklin Boampong</span></li>
+                  <li><label>Address</label><span>1360 Campus Drive, NC 27708</span></li>
+                  <li><label>Email</label><span class="word-wrap">fboamps@gmail.com</span></li>
+                  <li><label>Phone</label><span>000-000-0000</span></li>
+                  <li><label>Website</label><span>www.unknown.com</span></li>
+              </ul>
+          </div>
+          
+          <nav class="menu">
+              <ul class="tabs">
+                  <li>
+                      <a href="" class = "tab-profile">
+                          <i><i class="fa fa-user"></i></i>
+                          PROFILE
+                      </a>
+                      
+                       <a href="" class = "tab-profile">
+                          <i><i class="fa fa-file-o"></i></i>
+                          RESUME
+                      </a>
+                      
+                       <a href="" class = "tab-profile">
+                          <i><i class="fa fa-file-text-o"></i></i>
+                          PORTFOLIO
+                      </a>
+                      
+                       <a href="" class = "tab-profile">
+                          <i><i class="fa fa-book"></i></i>
+                          BLOG
+                      </a>
+                      
+                       <a href="" class = "tab-profile">
+                          <i><i class="fa fa-camera"></i></i>
+                          PHOTOGRAPHY
+                      </a>
+                      
+                       <a href="" class = "tab-profile">
+                          <i><i class="fa fa-envelope"></i></i>
+                          CONTACT
+                      </a>
+                      
+                  </li>
+              </ul>
+          </nav>
+      </section>
+      
+      <footer>
+          <div class="copyright">Copyright &copy; 2020 Franklin Boampong</div>
+      </footer>
+  </section>
+   
+   <script src ="https://code.jquery.com/jquery-3.5.1.js"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+   <script src = "js/main.js"></script>
+    
+</body>
 </html>
