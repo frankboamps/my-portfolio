@@ -1,3 +1,18 @@
+function getChatRoom() {
+    
+   console.log('Fetching the chat room.');
+   
+   // The fetch() function returns a Promise because the request is asynchronous.
+    getChatRoomUsingArrowFunctions();
+}
+
+function getChatRoomUsingArrowFunctions(){
+    fetch('/chat-room').then(response => response.text()).then((quote) => {
+    document.getElementById('chat-container').innerText = quote;
+  });
+}
+
+
 jQuery(document).ready(() => {
   // Logo animation
   const $logo = $("#logo");
