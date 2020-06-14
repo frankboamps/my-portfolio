@@ -3,15 +3,34 @@ function getChatRoom() {
    console.log('Fetching the chat room.');
    
    // The fetch() function returns a Promise because the request is asynchronous.
-    getChatRoomUsingArrowFunctions();
+   getChatRoomUsingArrowFunctions();
 }
 
 function getChatRoomUsingArrowFunctions(){
-    fetch('/chat-room').then(response => response.text()).then((quote) => {
-    document.getElementById('chat-container').innerText = quote;
+    fetch('/chat-room').then(response => response.json()).then(comment => {
+    const chatListElement = document.getElementById('chat-container');
+    chatListElement.innerHTML = '';
+    chatListElement.appendChild(
+        createListElement('Comment 1: ' + comment.comment1));
+    chatListElement.appendChild(
+        createListElement('Comment 2: ' + comment.comment2));
+    chatListElement.appendChild(
+        createListElement('Comment 3: ' + comment.comment3));
   });
 }
 
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
+
+async function getRandomQuoteUsingAsyncAwait() {
+  const response = await fetch('/chat-room');
+  const quote = await response.text();
+  document.getElementById('chat-container').innerText = quote;
+}
 
 jQuery(document).ready(() => {
   // Logo animation
