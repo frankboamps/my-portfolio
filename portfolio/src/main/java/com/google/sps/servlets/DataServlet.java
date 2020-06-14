@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.util.List;
 import com.google.sps.data.Comment;
@@ -38,8 +41,25 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
-    //String json = new Gson().toJson(commentArray);
-   // response.getWriter().println(json);
+
+    Query query = new Query("Comment").addSort("Sender", SortDirection.DESCENDING);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    PreparedQuery results = datastore.prepare(query);
+
+    List<Comment> comments = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      String sender = (String) entity.getProperty("Sender");
+      String message = (String) entity.getProperty("Message");
+
+      Comment comment = new Comment(sender, message);
+      comments.add(comment);
+    }
+
+    Gson gson = new Gson();
+    String json = new Gson().toJson(comments);
+    response.getWriter().println(json);
   }
 
   @Override
