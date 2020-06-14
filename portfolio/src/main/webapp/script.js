@@ -10,12 +10,10 @@ function getChatRoomUsingArrowFunctions(){
     fetch('/chat-room').then(response => response.json()).then(comment => {
     const chatListElement = document.getElementById('chat-container');
     chatListElement.innerHTML = '';
-    chatListElement.appendChild(
-        createListElement('Comment 1: ' + comment.comment1));
-    chatListElement.appendChild(
-        createListElement('Comment 2: ' + comment.comment2));
-    chatListElement.appendChild(
-        createListElement('Comment 3: ' + comment.comment3));
+    for (var i = 0; i < comment.length; i++){
+        var obj = comment[i];
+        chatListElement.appendChild(createListElement('Name: ' + obj.messageSubject + "\n" + "Message/Comment: " + obj.text));
+    }
   });
 }
 
