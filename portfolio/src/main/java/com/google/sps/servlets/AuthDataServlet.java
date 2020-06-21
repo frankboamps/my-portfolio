@@ -40,10 +40,17 @@ public class AuthDataServlet extends HttpServlet {
     // Only logged-in users can see the form
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
+      out.println("<p>Welcome visitor with email: " + userService.getCurrentUser().getEmail() + "!</p>");
+      out.println("<p>You are all logged in, please type a message:</p>");
+      out.println("<form method=\"POST\" action=\"/chat-room\" id=\"usrform\">");
+      out.println("Nick name: <input type=\"text\" name=\"subject\" form=\"usrform\"> <input type=\"submit\">");
+      out.println("<br/>");
+      out.println("<textarea rows=\"0\" cols=\"100\" name=\"text\" form=\"usrform\">Enter Comment...</textarea>");
+      //out.println("<button>Submit</button>");
+      out.println("</form>");
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/";
       String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-      response.getWriter().println("<p>Hello " + userEmail + "!</p>");
       response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
     } else {
       String loginUrl = userService.createLoginURL("/authdata");
@@ -51,16 +58,4 @@ public class AuthDataServlet extends HttpServlet {
     }
   }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-    UserService userService = UserServiceFactory.getUserService();
-
-    // Only logged-in users can post messages
-    if (!userService.isUserLoggedIn()) {
-      response.sendRedirect("/authdata");
-      return;
-    }
-    response.sendRedirect("/authdata");
-  }
 }

@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
@@ -42,21 +44,22 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
 
-    Query query = new Query("Comment").addSort("Sender", SortDirection.DESCENDING);
+    Query query = new Query("Comment").addSort("sender", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-
+    System.out.println(results);
     List<Comment> comments = new ArrayList<>();
     for (Entity entity : results.asIterable()) {
       long id = entity.getKey().getId();
-      String sender = (String) entity.getProperty("Sender");
-      String message = (String) entity.getProperty("Message");
+      String sender = (String) entity.getProperty("sender");
+      String message = (String) entity.getProperty("message");
+      String email = (String) entity.getProperty("email");
 
-      Comment comment = new Comment(sender, message);
+      Comment comment = new Comment(sender, message, email);
       comments.add(comment);
     }
-
+    System.out.println(comments);
     Gson gson = new Gson();
     String json = new Gson().toJson(comments);
     response.getWriter().println(json);
@@ -64,24 +67,35 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // If the user sends another POST request after the game is over, then start a new game.
+    UserService userService = UserServiceFactory.getUserService();
+
+    // Only logged-in users can post messages
+    if (!userService.isUserLoggedIn()) {
+      response.sendRedirect("/chat-room");
+      return;
+    }
+    
     response.setContentType("text/html");
     response.getWriter().println("Please Add a comment.");
-    addNewComment(request);
+    addNewComment(request, userService);
     // Redirect back to the HTML page.
     response.sendRedirect("/chatroom.html");
   }
 
-  private void addNewComment(HttpServletRequest request) {
+  private void addNewComment(HttpServletRequest request, UserService userService) {
       String tempSubject = request.getParameter("subject");
       String commentText = request.getParameter("text");
+      String text = request.getParameter("text");
+      String email = userService.getCurrentUser().getEmail();
 
-      Entity taskEntity = new Entity("Comment");
-      taskEntity.setProperty("Sender", tempSubject);
-      taskEntity.setProperty("Message", commentText);
+      Entity commentEntity = new Entity("Comment");
+     commentEntity.setProperty("sender", tempSubject);
+     commentEntity.setProperty("message", commentText);
+     commentEntity.setProperty("email", commentText);
+     commentEntity.setProperty("timestamp", System.currentTimeMillis());
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      datastore.put(taskEntity);
+      datastore.put(commentEntity);
   }
 
 }

@@ -1,6 +1,5 @@
 function getChatRoom() {
    // The fetch() function returns a Promise because the request is asynchronous.
-   //getChatRoomUsingArrowFunctions();
    getUserLoginStatus();
 }
 
@@ -10,10 +9,11 @@ function getUserLoginStatus(){
   });
 }
 
-function getChatRoomUsingArrowFunctions(){
+function getComments(){
     fetch('/chat-room').then(response => response.json()).then(comment => {
     const chatListElement = document.getElementById('chat-container');
     chatListElement.innerHTML = '';
+    console.log(comment);
     for (var i = 0; i < comment.length; i++){
         var obj = comment[i];
         chatListElement.appendChild(createListElement('Name: ' + obj.messageSubject + "\n" + "Message/Comment: " + obj.text));

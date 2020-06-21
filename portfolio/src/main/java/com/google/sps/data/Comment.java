@@ -6,10 +6,12 @@ import java.util.Date;
 public final class Comment {
   private final String messageSubject;
   private final String text;
+  private final String email;
 
-  public Comment(String subject, String text) {
+  public Comment(String subject, String text, String email) {
     this.messageSubject = subject;
     this.text = text;
+    this.email = email;
   }
 
   public String getMessageSubject() {
@@ -18,6 +20,10 @@ public final class Comment {
 
   public String getText() {
       return text;
+  }
+
+  public String getEmail() {
+      return email;
   }
   
 }
