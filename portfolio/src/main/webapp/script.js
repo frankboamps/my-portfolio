@@ -16,6 +16,9 @@ function getComments(){
     console.log(comment);
     for (var i = 0; i < comment.length; i++){
         var obj = comment[i];
+        if(obj.imageUrl){
+        chatListElement.appendChild(createImageTag(obj.imageUrl));
+        }
         chatListElement.appendChild(createListElement('Name: ' + obj.messageSubject + "\n" + "Message/Comment: " + obj.text));
     }
   });
@@ -26,6 +29,14 @@ function createListElement(text) {
   const liElement = document.createElement('li');
   liElement.innerText = text;
   return liElement;
+}
+
+function createImageTag(text){
+  var imgElement = document.createElement('img');
+  imgElement.src = text;
+  imgElement.width = 160;
+  imgElement.height = 160;
+  return imgElement;
 }
 
 async function getRandomQuoteUsingAsyncAwait() {

@@ -22,6 +22,8 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.annotation.WebServlet;
@@ -37,16 +39,19 @@ public class AuthDataServlet extends HttpServlet {
     response.setContentType("text/html;");
     PrintWriter out = response.getWriter();
 
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+    String uploadUrl = blobstoreService.createUploadUrl("/chat-room");
+
     // Only logged-in users can see the form
     UserService userService = UserServiceFactory.getUserService();
     if (userService.isUserLoggedIn()) {
       out.println("<p>Welcome visitor with email: " + userService.getCurrentUser().getEmail() + "!</p>");
       out.println("<p>You are all logged in, please type a message:</p>");
-      out.println("<form method=\"POST\" action=\"/chat-room\" id=\"usrform\">");
+      out.println("<form method=\"POST\" enctype=\"multipart/form-data\" action=\"" + uploadUrl + "\" id=\"usrform\">");
       out.println("Nick name: <input type=\"text\" name=\"subject\" form=\"usrform\"> <input type=\"submit\">");
+      out.println("Upload an image: <input type=\"file\" name=\"image\" form=\"usrform\">");
       out.println("<br/>");
       out.println("<textarea rows=\"0\" cols=\"100\" name=\"text\" form=\"usrform\">Enter Comment...</textarea>");
-      //out.println("<button>Submit</button>");
       out.println("</form>");
       String userEmail = userService.getCurrentUser().getEmail();
       String urlToRedirectToAfterUserLogsOut = "/";
