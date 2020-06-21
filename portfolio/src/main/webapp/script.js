@@ -1,9 +1,13 @@
 function getChatRoom() {
-    
-   console.log('Fetching the chat room.');
-   
    // The fetch() function returns a Promise because the request is asynchronous.
-   getChatRoomUsingArrowFunctions();
+   //getChatRoomUsingArrowFunctions();
+   getUserLoginStatus();
+}
+
+function getUserLoginStatus(){
+   fetch('/authdata').then(response => response.text()).then((quote) => {
+     document.getElementById('auth-room').innerHTML = quote;
+  });
 }
 
 function getChatRoomUsingArrowFunctions(){
