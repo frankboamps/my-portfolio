@@ -33,6 +33,15 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
+import com.google.cloud.vision.v1.AnnotateImageRequest;
+import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
+import com.google.cloud.vision.v1.EntityAnnotation;
+import com.google.cloud.vision.v1.Feature;
+import com.google.cloud.vision.v1.Image;
+import com.google.cloud.vision.v1.ImageAnnotatorClient;
+import com.google.protobuf.ByteString;
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Map;
 import com.google.sps.data.Comment;
@@ -53,7 +62,7 @@ public class DataServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/json");
 
-    Query query = new Query("Comment").addSort("sender", SortDirection.DESCENDING);
+    Query query = new Query("Comment").addSort("timestamp", SortDirection.DESCENDING);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -65,10 +74,16 @@ public class DataServlet extends HttpServlet {
       String message = (String) entity.getProperty("message");
       String email = (String) entity.getProperty("email");
       String imageUrl = (String) entity.getProperty("image");
-      Comment comment = new Comment(sender, message, email, imageUrl);
-      comments.add(comment);
+      List<EntityAnnotation> imageLabels = (List<EntityAnnotation>) entity.getProperty("imagelabel");
+    //   if(imageLabels == null){
+    //         Comment comment = new Comment(sender, message, email, imageUrl);
+    //         comments.add(comment);
+    //   }
+    //   else{
+           Comment comment = new Comment(sender, message, email, imageUrl, imageLabels);
+           comments.add(comment);
+    //  }
     }
-    System.out.println(comments);
     Gson gson = new Gson();
     String json = new Gson().toJson(comments);
     response.getWriter().println(json);
@@ -77,15 +92,11 @@ public class DataServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
-
     // Only logged-in users can post messages
     if (!userService.isUserLoggedIn()) {
       response.sendRedirect("/chat-room");
       return;
     }
-    
-   // response.setContentType("text/html");
-   // response.getWriter().println("Please Add a comment.");
     addNewComment(request, userService);
     // Redirect back to the HTML page.
     response.sendRedirect("/chatroom.html");
@@ -95,26 +106,78 @@ public class DataServlet extends HttpServlet {
       String tempSubject = request.getParameter("subject");
       String commentText = request.getParameter("text");
       String email = userService.getCurrentUser().getEmail();
-      String imageUrl = getUploadedFileUrl(request, "image");
-
+      String imageUrl = null; byte[] blobBytes = null; List<EntityAnnotation> imageLabels = null;
+      BlobKey blobKey = getBlobKey(request, "image");
+      if (blobKey != null) {
+          try{
+             imageUrl = getUploadedFileUrl(blobKey);
+              blobBytes = getBlobBytes(blobKey);
+              imageLabels = getImageLabels(blobBytes);
+          }
+          catch(Exception e) {
+           System.out.println(e.getMessage());
+        } 
+      }
+      
       Entity commentEntity = new Entity("Comment");
      commentEntity.setProperty("sender", tempSubject);
      commentEntity.setProperty("message", commentText);
      commentEntity.setProperty("email", email);
      commentEntity.setProperty("image", imageUrl);
      commentEntity.setProperty("timestamp", System.currentTimeMillis());
+     commentEntity.setProperty("imagelabel", imageLabels);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);
   }
 
-   /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
-  private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
+//    /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
+//   private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
+//     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+//     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+//     List<BlobKey> blobKeys = blobs.get("image");
+
+//     // User submitted form without selecting a file, so we can't get a URL. (dev server)
+//     if (blobKeys == null || blobKeys.isEmpty()) {
+//       return null;
+//     }
+
+//     // Our form only contains a single file input, so get the first index.
+//     BlobKey blobKey = blobKeys.get(0);
+
+//     // User submitted form without selecting a file, so we can't get a URL. (live server)
+//     BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+//     if (blobInfo.getSize() == 0) {
+//       blobstoreService.delete(blobKey);
+//       return null;
+//     }
+
+//     // We could check the validity of the file here, e.g. to make sure it's an image file
+//     // https://stackoverflow.com/q/10779564/873165
+
+//     // Use ImagesService to get a URL that points to the uploaded file.
+//     ImagesService imagesService = ImagesServiceFactory.getImagesService();
+//     ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
+//     String url = imagesService.getServingUrl(options);
+
+//     // GCS's localhost preview is not actually on localhost,
+//     // so make the URL relative to the current domain.
+//     if(url.startsWith("http://localhost:8080/")){
+//       url = url.replace("http://localhost:8080/", "/");
+//     }
+//     return url;
+//   }
+
+   /**
+   * Returns the BlobKey that points to the file uploaded by the user, or null if the user didn't
+   * upload a file.
+   */
+  private BlobKey getBlobKey(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
     List<BlobKey> blobKeys = blobs.get("image");
 
-    // User submitted form without selecting a file, so we can't get a URL. (dev server)
+    // User submitted form without selecting a file, so we can't get a BlobKey. (dev server)
     if (blobKeys == null || blobKeys.isEmpty()) {
       return null;
     }
@@ -122,17 +185,74 @@ public class DataServlet extends HttpServlet {
     // Our form only contains a single file input, so get the first index.
     BlobKey blobKey = blobKeys.get(0);
 
-    // User submitted form without selecting a file, so we can't get a URL. (live server)
+    // User submitted form without selecting a file, so the BlobKey is empty. (live server)
     BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
     if (blobInfo.getSize() == 0) {
       blobstoreService.delete(blobKey);
       return null;
     }
 
-    // We could check the validity of the file here, e.g. to make sure it's an image file
-    // https://stackoverflow.com/q/10779564/873165
+    return blobKey;
+  }
 
-    // Use ImagesService to get a URL that points to the uploaded file.
+  /**
+   * Blobstore stores files as binary data. This function retrieves the binary data stored at the
+   * BlobKey parameter.
+   */
+  private byte[] getBlobBytes(BlobKey blobKey) throws IOException {
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+    ByteArrayOutputStream outputBytes = new ByteArrayOutputStream();
+
+    int fetchSize = BlobstoreService.MAX_BLOB_FETCH_SIZE;
+    long currentByteIndex = 0;
+    boolean continueReading = true;
+    while (continueReading) {
+      // end index is inclusive, so we have to subtract 1 to get fetchSize bytes
+      byte[] b =
+          blobstoreService.fetchData(blobKey, currentByteIndex, currentByteIndex + fetchSize - 1);
+      outputBytes.write(b);
+
+      // if we read fewer bytes than we requested, then we reached the end
+      if (b.length < fetchSize) {
+        continueReading = false;
+      }
+
+      currentByteIndex += fetchSize;
+    }
+
+    return outputBytes.toByteArray();
+  }
+
+  /**
+   * Uses the Google Cloud Vision API to generate a list of labels that apply to the image
+   * represented by the binary data stored in imgBytes.
+   */
+  private List<EntityAnnotation> getImageLabels(byte[] imgBytes) throws IOException {
+    ByteString byteString = ByteString.copyFrom(imgBytes);
+    Image image = Image.newBuilder().setContent(byteString).build();
+
+    Feature feature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
+    AnnotateImageRequest request =
+        AnnotateImageRequest.newBuilder().addFeatures(feature).setImage(image).build();
+    List<AnnotateImageRequest> requests = new ArrayList<>();
+    requests.add(request);
+
+    ImageAnnotatorClient client = ImageAnnotatorClient.create();
+    BatchAnnotateImagesResponse batchResponse = client.batchAnnotateImages(requests);
+    client.close();
+    List<AnnotateImageResponse> imageResponses = batchResponse.getResponsesList();
+    AnnotateImageResponse imageResponse = imageResponses.get(0);
+
+    if (imageResponse.hasError()) {
+      System.err.println("Error getting image labels: " + imageResponse.getError().getMessage());
+      return null;
+    }
+
+    return imageResponse.getLabelAnnotationsList();
+  }
+
+  /** Returns a URL that points to the uploaded file. */
+  private String getUploadedFileUrl(BlobKey blobKey) {
     ImagesService imagesService = ImagesServiceFactory.getImagesService();
     ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
     String url = imagesService.getServingUrl(options);
