@@ -25,7 +25,7 @@ function getComments(){
                 chatListElement.appendChild(createParagraphElement(obj.entityAnnotations.get(i)))
             }
         }
-        chatListElement.appendChild(createListElement('Name: ' + obj.messageSubject + "\n" + "Message/Comment: " + obj.text));
+        chatListElement.appendChild(createListElement('Name: ' + obj.messageSubject + "\n" + "Message/Comment: " + obj.text + " (" +  obj.score + ")"));
         chatListElement.appendChild(createParagraphElement("  "))
     }
   });

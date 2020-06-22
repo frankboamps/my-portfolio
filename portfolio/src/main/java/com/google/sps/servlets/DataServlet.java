@@ -42,6 +42,9 @@ import com.google.cloud.vision.v1.Image;
 import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.protobuf.ByteString;
 import java.io.ByteArrayOutputStream;
+import com.google.cloud.language.v1.Document;
+import com.google.cloud.language.v1.LanguageServiceClient;
+import com.google.cloud.language.v1.Sentiment;
 import java.util.List;
 import java.util.Map;
 import com.google.sps.data.Comment;
@@ -75,14 +78,9 @@ public class DataServlet extends HttpServlet {
       String email = (String) entity.getProperty("email");
       String imageUrl = (String) entity.getProperty("image");
       List<EntityAnnotation> imageLabels = (List<EntityAnnotation>) entity.getProperty("imagelabel");
-    //   if(imageLabels == null){
-    //         Comment comment = new Comment(sender, message, email, imageUrl);
-    //         comments.add(comment);
-    //   }
-    //   else{
-           Comment comment = new Comment(sender, message, email, imageUrl, imageLabels);
-           comments.add(comment);
-    //  }
+      float score = (float) entity.getProperty("sentiment");
+      Comment comment = new Comment(sender, message, email, imageUrl, imageLabels, score);
+      comments.add(comment);
     }
     Gson gson = new Gson();
     String json = new Gson().toJson(comments);
@@ -102,22 +100,21 @@ public class DataServlet extends HttpServlet {
     response.sendRedirect("/chatroom.html");
   }
 
-  private void addNewComment(HttpServletRequest request, UserService userService) {
+  private void addNewComment(HttpServletRequest request, UserService userService) throws IOException{
       String tempSubject = request.getParameter("subject");
       String commentText = request.getParameter("text");
       String email = userService.getCurrentUser().getEmail();
-      String imageUrl = null; byte[] blobBytes = null; List<EntityAnnotation> imageLabels = null;
+      String imageUrl; byte[] blobBytes; List<EntityAnnotation> imageLabels;
       BlobKey blobKey = getBlobKey(request, "image");
-      if (blobKey != null) {
-          try{
-             imageUrl = getUploadedFileUrl(blobKey);
-              blobBytes = getBlobBytes(blobKey);
-              imageLabels = getImageLabels(blobBytes);
-          }
-          catch(Exception e) {
-           System.out.println(e.getMessage());
-        } 
-      }
+          imageUrl = getUploadedFileUrl(blobKey);
+          blobBytes = getBlobBytes(blobKey);
+          imageLabels = getImageLabels(blobBytes);
+
+       Document doc = Document.newBuilder().setContent(commentText).setType(Document.Type.PLAIN_TEXT).build();
+       LanguageServiceClient languageService = LanguageServiceClient.create();
+       Sentiment sentiment = languageService.analyzeSentiment(doc).getDocumentSentiment();
+       float score = sentiment.getScore();
+       languageService.close();
       
       Entity commentEntity = new Entity("Comment");
      commentEntity.setProperty("sender", tempSubject);
@@ -126,6 +123,7 @@ public class DataServlet extends HttpServlet {
      commentEntity.setProperty("image", imageUrl);
      commentEntity.setProperty("timestamp", System.currentTimeMillis());
      commentEntity.setProperty("imagelabel", imageLabels);
+     commentEntity.setProperty("sentiment", score);
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
       datastore.put(commentEntity);

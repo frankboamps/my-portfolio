@@ -10,20 +10,23 @@ public final class Comment {
   private final String email;
   private final String imageUrl;
   private List<EntityAnnotation> entityAnnotations;
+  private final float score;
 
-  public Comment(String subject, String text, String email, String imageUrl) {
+  public Comment(String subject, String text, String email, String imageUrl, float score) {
     this.messageSubject = subject;
     this.text = text;
     this.email = email;
     this.imageUrl = imageUrl;
+    this.score = score;
   }
 
-  public Comment(String subject, String text, String email, String imageUrl, List<EntityAnnotation> annotations) {
+  public Comment(String subject, String text, String email, String imageUrl, List<EntityAnnotation> annotations, float score) {
     this.messageSubject = subject;
     this.text = text;
     this.email = email;
     this.imageUrl = imageUrl;
     this.entityAnnotations = annotations;
+    this.score = score;
   }
 
   public String getMessageSubject() {
@@ -44,6 +47,10 @@ public final class Comment {
 
   public List<EntityAnnotation> getEntityAnnotations() {
       return entityAnnotations;
+  }
+
+   public float getScore() {
+      return score;
   }
   
 }
