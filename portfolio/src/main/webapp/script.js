@@ -20,11 +20,11 @@ function getComments(){
         chatListElement.appendChild(createParagraphElement("Image attached: "))
         chatListElement.appendChild(createImageTag(obj.imageUrl));
         }
-        if(obj.entityAnnotations){
-            for (var i = 0; i < obj.entityAnnotations.size(); i++){
-                chatListElement.appendChild(createParagraphElement(obj.entityAnnotations.get(i)))
-            }
-        }
+        // if(obj.entityAnnotations){
+        //     for (var i = 0; i < obj.entityAnnotations.size(); i++){
+        //         chatListElement.appendChild(createParagraphElement(obj.entityAnnotations.get(i)))
+        //     }
+        // }
         chatListElement.appendChild(createListElement('Name: ' + obj.messageSubject + "\n" + "Message/Comment: " + obj.text + " (" +  obj.score + ")"));
         chatListElement.appendChild(createParagraphElement("  "))
     }

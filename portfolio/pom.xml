@@ -16,24 +16,6 @@
     <failOnMissingWebXml>false</failOnMissingWebXml>
   </properties>
 
-  <!-- <dependencyManagement>
-  <dependencies>
-    <dependency>
-      <groupId>com.google.cloud</groupId>
-      <artifactId>libraries-bom</artifactId>
-      <version>7.0.0</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-  </dependencies>
-</dependencyManagement>
-
-<dependencies>
-  <dependency>
-    <groupId>com.google.cloud</groupId>
-    <artifactId>google-cloud-storage</artifactId>
-  </dependency> -->
-
   <dependencies>
     <dependency>
       <groupId>javax.servlet</groupId>
