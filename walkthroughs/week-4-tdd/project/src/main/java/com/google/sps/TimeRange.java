@@ -36,6 +36,16 @@ public final class TimeRange {
     }
   };
 
+    /**
+   * A comparator for sorting ranges by their start time in descending order.
+   */
+  public static final Comparator<TimeRange> ORDER_BY_START_DESC = new Comparator<TimeRange>() {
+    @Override
+    public int compare(TimeRange a, TimeRange b) {
+      return b.start - a.start;
+    }
+  };
+
   /**
    * A comparator for sorting ranges by their end time in ascending order.
    */
