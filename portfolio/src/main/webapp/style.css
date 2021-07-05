@@ -1,5 +1,5 @@
 body {
-  background-image: url(../img/space_bg.jpg);
+  background-image: url(../img/background.jpg);
 }
 
 a, a:hover {
@@ -15,6 +15,10 @@ a, a:hover {
 
 #content {
   background: white;
+}
+
+.content {
+    color: #cf455c;
 }
 
 #profile {

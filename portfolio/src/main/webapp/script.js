@@ -1,3 +1,35 @@
+function getChatRoom() {
+    
+   console.log('Fetching the chat room.');
+   
+   // The fetch() function returns a Promise because the request is asynchronous.
+   getChatRoomUsingArrowFunctions();
+}
+
+function getChatRoomUsingArrowFunctions(){
+    fetch('/chat-room').then(response => response.json()).then(comment => {
+    const chatListElement = document.getElementById('chat-container');
+    chatListElement.innerHTML = '';
+    for (var i = 0; i < comment.length; i++){
+        var obj = comment[i];
+        chatListElement.appendChild(createListElement('Name: ' + obj.messageSubject + "\n" + "Message/Comment: " + obj.text));
+    }
+  });
+}
+
+/** Creates an <li> element containing text. */
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
+
+async function getRandomQuoteUsingAsyncAwait() {
+  const response = await fetch('/chat-room');
+  const quote = await response.text();
+  document.getElementById('chat-container').innerText = quote;
+}
+
 jQuery(document).ready(() => {
   // Logo animation
   const $logo = $("#logo");

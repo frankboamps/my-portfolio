@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div id="content">
+      <h1>Chat Room</h1>
+      <p>Click here to read comments</p>
+      <button onclick="getChatRoom()">See Comments</button>
+      <ul id="chat-container"></ul>
+    </div>
+
+    <h1>Fill the form below to add comment</h1>
+    <form action="/chat-room" method="POST" id="usrform">
+        Name: <input type="text" name="subject" form="usrform">
+        <input type="submit">
+    </form>
+    <br>
+    <textarea rows="0" cols="100" name="text" form="usrform">Enter Comment...</textarea>
+
+  <p>The text area above is outside the form element, but should still be a part of the form.</p>
+
+  </body>
+</html>
